@@ -7,19 +7,19 @@ do sekundy.
 
 | Krok | Czas |
 |---|---|
-| Set up job | |
-| Checkout | |
-| Set up Node | |
-| Install dependencies | |
-| Install Playwright browsers | |
-| Unit tests | |
-| API tests | |
-| UI tests | |
-| Upload Playwright report | |
-| Post Set up Node | |
-| Post Checkout | |
-| Complete job | |
-| **Cały przebieg** | |
+| Set up job | 1s|
+| Checkout | 0s|
+| Set up Node | 1s|
+| Install dependencies | 6s|
+| Install Playwright browsers | 20s|
+| Unit tests | 0s|
+| API tests | 20s|
+| UI tests | 2m 26s|
+| Upload Playwright report | 2s|
+| Post Set up Node | 0s|
+| Post Checkout | 1s|
+| Complete job | 0s|
+| **Cały przebieg** | 3m 20s|
 
 ## Czas do pierwszego czerwonego sygnału
 
