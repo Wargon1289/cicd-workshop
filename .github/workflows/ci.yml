@@ -27,6 +27,8 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
+permissions:
+  contents: read
 jobs:
   changes:
     name: Changed files
@@ -72,6 +74,7 @@ jobs:
   unit:
     name: Unit tests
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -226,6 +229,14 @@ jobs:
           path: reports/ui-*.xml
           retention-days: 1
 
+      - name: Upload traces
+        uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: traces-${{ matrix.shard }}
+          path: test-results/
+          retention-days: 14
+
   ui-report:
     name: UI report
     runs-on: ubuntu-latest
@@ -290,3 +301,22 @@ jobs:
       - name: Job summary
         if: always()
         run: node scripts/ci-summary.mjs reports/*.xml
+  
+  pipeline-status:
+    name: Pipeline status
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    needs: [changes, quality, unit, security, build, test-api, test-ui, ui-report, test-report]
+    if: always()
+    steps:
+      - name: Check results
+        run: |
+          results='${{ join(needs.*.result, ' ') }}'
+          echo "Job results: $results"
+          for result in $results; do
+            case "$result" in
+              success|skipped) ;;
+              *) echo "::error::A job finished with result: $result"; exit 1 ;;
+            esac
+          done
+          echo "All checks passed."
